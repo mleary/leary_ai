@@ -1,5 +1,6 @@
 from openai import OpenAI
 import streamlit as st
+import streamlit_authenticator as stauth
 from sections import chat, calendar, about
 
 
