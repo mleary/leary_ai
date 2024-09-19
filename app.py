@@ -1,25 +1,59 @@
-from openai import OpenAI
 import streamlit as st
-from sections import chat, calendar, about
+import streamlit_authenticator as stauth
 
+from openai import OpenAI
+from auth import config
 
-# Header with page selection
+from sections import home, chat, calendar
+
+##########################################################
+# Set page configuration (needs to be first streamlit call)
+##########################################################
+
 st.set_page_config(page_title="learyAI", layout="wide")
-st.title("learyAI")
-st.caption("🚀 A personal family chatbot powered by AI")
 
-# Page selection
-page = st.selectbox("Select a page", ["Chat", "Calendar", "About"], index=0)
+##########################################################
+# Authentication
+##########################################################
 
-# Page content
-if page == "Chat":
-    chat.render()
-elif page == "Calendar":
-    calendar.render()
-elif page == "About":
-    about.render()
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['preauthorized']
+)
+
+authenticator.login(location='main')
+
+##########################################################
+# App - If successful login, proceed to page selection
+##########################################################
+if st.session_state['authentication_status']:
+    authenticator.logout()
+
+    # Sidebar for navigation
+    st.sidebar.title("Navigation")
+    page = st.sidebar.selectbox("Select a page", ["Home", "Chat", "Calendar"], index=0)
+
+    # Page content
+    if page == "Home":
+        home.render()
+    elif page == "Chat":
+        chat.render()
+    elif page == "Calendar":
+        calendar.render()
 
 
-# Common sidebar content
-with st.sidebar:
-    st.write("Powered by Python, LLMs, and ☕")
+    # Common sidebar content
+    with st.sidebar:
+        st.write("Powered by Python, LLMs, and ☕")
+
+elif st.session_state['authentication_status'] is False:
+    st.error('Username/password is incorrect')
+
+elif st.session_state['authentication_status'] is None:
+    st.warning('Please enter your username and password')
+    
+
+    
