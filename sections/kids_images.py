@@ -6,6 +6,7 @@ from PIL import Image
 import requests
 from io import BytesIO
 from azure.storage.blob import BlobServiceClient
+from datetime import datetime
 
 # Load environment variables from .env file
 load_dotenv()
@@ -26,6 +27,7 @@ def dalle_image(user_prompt):
         api_version="2024-07-01-preview",
         azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"))
 
+    id =  datetime.now().strftime("%Y%m%d%H%M%S")
     response = client.images.generate(
         model="dall-e-3",
         prompt=user_prompt,
@@ -35,7 +37,7 @@ def dalle_image(user_prompt):
     )
 
     image_url = response.data[0].url
-    return image_url
+    return image_url, user_prompt, id
 
 
 def save_image_to_azure(url, container_name, blob_name, connection_string, metadata=None):
@@ -82,23 +84,46 @@ def save_image_to_azure(url, container_name, blob_name, connection_string, metad
 
 
 def render():
-    st.header("📖 Story Generator")
+    st.header("🖼️ Image generator")
+    
+    # Create a dropdown selection
+    # Create two columns
+    col1, col2 = st.columns(2)
 
-    user_input = st.text_input("Enter some text")
+    # Place the dropdown selection in the first column
+    with col1:
+        creator = st.multiselect(
+            'Creator', ('Nora', 'Tess', 'Matt', 'Ann-Marie', 'Someone else!'))
+
+    # Place the multiselect in the second column
+    with col2:
+        type = st.selectbox(
+            'What type of image?', ["cartoon", "realistic image"], index=0)
+
+    user_input = st.text_input("Describe your image here:")
 
     # Create a button
     if st.button('Create'):
         # Print request & create a placeholder
         placeholder = st.empty()
         placeholder.text('Creating an image based on your input...')
-        image_url = dalle_image(user_input)
+        prompt = user_input + "The image should be a " + type
+        image_url, prompt, id = dalle_image(prompt)
         placeholder.text('Downloading picture for display...')
-        #path = download_image(result)
+        # generate metadata
+        metadata = {
+        "id":id,
+        "author": ", ".join(creator),
+        "prompt": prompt,
+        'tags': ", ".join(type)
+        }
+
         save_image_to_azure(
             url = image_url, 
             container_name = os.getenv("AZURE_CONTAINER_NAME"), 
-            blob_name='test.jpg',
-            connection_string = os.getenv("AZURE_CONTAINER_CONNECTION_STRING"))
+            blob_name=f'{id}.jpg',
+            connection_string = os.getenv("AZURE_CONTAINER_CONNECTION_STRING"),
+            metadata=metadata)
         if image_url:
             try:
                 # Fetch the image from the URL
@@ -106,7 +131,8 @@ def render():
                 image = Image.open(BytesIO(response.content))
 
                 # Display the image
-                st.image(image, caption="Image from URL", use_column_width=True)
+                st.image(image, caption="Image info:", use_column_width=True)
+                st.markdown(f"Prompt: {prompt}<br>[View Image]({blob_url})", unsafe_allow_html=True)
 
             except Exception as e:
                 st.error(f"An error occurred: {e}")

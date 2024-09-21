@@ -45,7 +45,7 @@ def render():
     with st.sidebar:
         st.header("Story Settings")  
         if "system_prompt" not in st.session_state:
-            st.session_state.system_prompt = "test"
+            st.session_state.system_prompt = "You are a creative author of children stories. You write stories for six year olds."
             system_prompt = st.text_input("Enter a system prompt for the story:", value=st.session_state.system_prompt)
             st.session_state.system_prompt = system_prompt
         
@@ -56,11 +56,20 @@ def render():
             st.session_state.model_name = model_name
 
     # Create a dropdown selection
-    option = st.selectbox(
-        'What do you want to do?',
-        ('Write a story', 'Make an image'))
+    # Create two columns
+    col1, col2 = st.columns(2)
 
-    user_input = st.text_input("Enter some text")
+    # Place the dropdown selection in the first column
+    with col1:
+        length = st.selectbox(
+            'How many paragraphs?', (3, 4, 5, 6))
+
+    # Place the multiselect in the second column
+    with col2:
+        tone = st.multiselect(
+            'What type of story?', ("Funny", "Mystery", "Adventure", "Silly"))
+
+    user_input = st.text_input("Enter a story prompt here!")
 
     # Create a button
     if st.button('Create'):
@@ -70,7 +79,9 @@ def render():
         st.markdown('---')
 
         # Update the placeholder with a the result
-        result = openai_story(st.session_state.system_prompt, user_input)
+        details = f'The story should be approximately {length} paragraphs long and it is a {tone} story'
+        prompt = st.session_state.system_prompt + details
+        result = openai_story(st.session_state.system_prompt, prompt)
         placeholder.text('Creating an audio output of your story.')
         st.markdown(result)
         #text_to_audio(result)
