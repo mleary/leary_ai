@@ -132,7 +132,7 @@ def render():
 
                 # Display the image
                 st.image(image, caption="Image info:", use_column_width=True)
-                st.markdown(f"Prompt: {prompt}<br>[View Image]({blob_url})", unsafe_allow_html=True)
+                st.markdown(f"Prompt: {prompt}<br>[View Image]({image_url})", unsafe_allow_html=True)
 
             except Exception as e:
                 st.error(f"An error occurred: {e}")
