@@ -4,7 +4,7 @@ import streamlit_authenticator as stauth
 from openai import OpenAI
 from auth import config
 
-from sections import home, chat, calendar
+from sections import home, chat, calendar, kids_stories, kids_images
 
 ##########################################################
 # Set page configuration (needs to be first streamlit call)
@@ -34,7 +34,7 @@ if st.session_state['authentication_status']:
 
     # Sidebar for navigation
     st.sidebar.title("Navigation")
-    page = st.sidebar.selectbox("Select a page", ["Home", "Chat", "Calendar"], index=0)
+    page = st.sidebar.selectbox("Select a page", ["Home", "Chat", "Calendar", "Create a story!", "Create an image!"], index=0)
 
     # Page content
     if page == "Home":
@@ -43,7 +43,10 @@ if st.session_state['authentication_status']:
         chat.render()
     elif page == "Calendar":
         calendar.render()
-
+    elif page == "Create a story!":
+        kids_stories.render()
+    elif page == "Create an image!":
+        kids_images.render()
 
     # Common sidebar content
     with st.sidebar:
