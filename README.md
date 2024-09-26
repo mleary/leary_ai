@@ -6,6 +6,11 @@ This is for exploring a personal chatbot assistant for my family.  The goal is t
 
 - TBD
 
+
+## deployment
+
+There is a github workflow setup to kick off a build and release process to Azure when PRs go to `main` branch. It ignores changes to README and other files not tied to dev work.
+
 ## setup
 This is a streamlit app that I am hosting in Azure via an app service.  to run locally, you will need to:
 
