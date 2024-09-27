@@ -10,6 +10,7 @@ from sections import home, chat, calendar, kids_stories, kids_images
 
 PAGE_TITLE = "learyAI"
 LAYOUT = "wide"
+PAGE_ICON = ':rocket:'
 NAVIGATION_TITLE = "Navigation"
 PAGES = {
     "Home": home,
@@ -46,7 +47,13 @@ def main():
     Main function to run the Streamlit app.
     """
     # Set page configuration
-    st.set_page_config(page_title=PAGE_TITLE, layout=LAYOUT)
+    st.set_page_config(
+        page_title=PAGE_TITLE, 
+        layout=LAYOUT,
+        page_icon=PAGE_ICON,
+        menu_items={
+        'About': 'https://github.com/mleary/leary_ai'
+    })
 
     # Authentication
     authenticator = stauth.Authenticate(

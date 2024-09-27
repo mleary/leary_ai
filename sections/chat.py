@@ -6,6 +6,7 @@ from openai import AzureOpenAI
 # Load environment variables from .env file
 load_dotenv()
 
+
 # Constants
 MODEL_PROVIDERS = ["OpenAI"]
 OPENAI_MODELS = ["gpt-4o-mini", "gpt-4o"]
@@ -26,17 +27,16 @@ def render_sidebar():
     Render the sidebar content for the Chat page.
     """
     st.sidebar.header("Chat Settings")
+    st.sidebar.markdown("---")  # Add a line after the header
+    
     model_provider = st.sidebar.selectbox("Select Model Provider", MODEL_PROVIDERS, key="model_provider")
     
-
-
     if model_provider == "OpenAI":
         model_name = st.sidebar.selectbox("Model Name", OPENAI_MODELS, key="openai_model_name")
         st.session_state.model_name = model_name
-    # Future support for other model providers can be added here
-    # elif model_provider == "Anthropic":
-    #     model_name = st.sidebar.selectbox("Model Name", ANTHROPIC_MODELS, key="anthropic_model_name")
-    #     st.session_state.model_name = model_name
+
+    st.sidebar.markdown("---")  # Add a line at the end
+
 
 
 def setup_azure_openai_client():
@@ -76,4 +76,11 @@ def render():
         msg = response.choices[0].message.content
         st.session_state.messages.append({"role": "assistant", "content": msg})
         st.chat_message("assistant").write(msg)
+     
+    # Button to clear chat history
+    if st.button("Clear Chat History"):
+        st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
+        st.rerun()
+        
+
 
