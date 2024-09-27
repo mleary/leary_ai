@@ -1,7 +1,7 @@
 import streamlit as st
 import streamlit_authenticator as stauth
 from openai import OpenAI
-from auth import config
+from utils.auth import config
 from sections import home, chat, calendar, kids_stories, kids_images
 
 ####################################
