@@ -1,16 +1,18 @@
-import streamlit as st
-from openai import AzureOpenAI
-from dotenv import load_dotenv
 import os
-from PIL import Image
-import requests
-from io import BytesIO
-from azure.storage.blob import BlobServiceClient
 from datetime import datetime
+from io import BytesIO
+
+import requests
+import streamlit as st
+from dotenv import load_dotenv
+from PIL import Image
+from azure.storage.blob import BlobServiceClient
+from openai import AzureOpenAI
 
 # Load environment variables from .env file
 load_dotenv()
 
+# helper functions to generate image and save image to azure
 def dalle_image(user_prompt):
     """
     Generates an image using the DALL-E model based on the given user prompt.
@@ -19,25 +21,31 @@ def dalle_image(user_prompt):
         user_prompt (str): The prompt provided by the user.
 
     Returns:
-        str: The URL of the generated image.
+        tuple: A tuple containing the URL of the generated image, the user prompt, and a unique ID.
     """
+    try:
         # Set up the Azure OpenAI client
-    client = AzureOpenAI(
-        api_key=os.getenv("AZURE_OPENAI_API_KEY"), 
-        api_version="2024-07-01-preview",
-        azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"))
+        client = AzureOpenAI(
+            api_key=os.getenv("AZURE_OPENAI_API_KEY"), 
+            api_version="2024-07-01-preview",
+            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+        )
 
-    id =  datetime.now().strftime("%Y%m%d%H%M%S")
-    response = client.images.generate(
-        model="dall-e-3",
-        prompt=user_prompt,
-        size="1024x1024",
-        quality="standard",
-        n=1,
-    )
+        unique_id = datetime.now().strftime("%Y%m%d%H%M%S")
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=user_prompt,
+            size="1024x1024",
+            quality="standard",
+            n=1,
+        )
 
-    image_url = response.data[0].url
-    return image_url, user_prompt, id
+        image_url = response.data[0].url
+        return image_url, user_prompt, unique_id
+
+    except Exception as e:
+        st.error(f"An error occurred while generating the image: {e}")
+        return None, None, None
 
 
 def save_image_to_azure(url, container_name, blob_name, connection_string, metadata=None):
@@ -82,7 +90,7 @@ def save_image_to_azure(url, container_name, blob_name, connection_string, metad
     blob_url = blob_client.url
     return blob_url
 
-
+# defining the page render to be used in app.py
 def render():
     st.header("🖼️ Image generator")
     
@@ -100,14 +108,14 @@ def render():
         type = st.selectbox(
             'What type of image?', ["cartoon", "realistic image"], index=0)
 
-    user_input = st.text_input("Describe your image here:")
+    user_input = st.text_input("Describe your image here: ")
 
     # Create a button
     if st.button('Create'):
         # Print request & create a placeholder
         placeholder = st.empty()
         placeholder.text('Creating an image based on your input...')
-        prompt = user_input + "The image should be a " + type
+        prompt = user_input + ".  The image should be a " + type + ' image'
         image_url, prompt, id = dalle_image(prompt)
         placeholder.text('Downloading picture for display...')
         # generate metadata
@@ -132,7 +140,7 @@ def render():
 
                 # Display the image
                 st.image(image, caption="Image info:", use_column_width=True)
-                st.markdown(f"Prompt: {prompt}<br>[View Image]({image_url})", unsafe_allow_html=True)
+                st.markdown(f"Prompt: {prompt}<br>[View Image URL]({image_url})", unsafe_allow_html=True)
 
             except Exception as e:
                 st.error(f"An error occurred: {e}")
