@@ -92,7 +92,4 @@ This is a Streamlit app that I am hosting in Azure via an App Service. To run lo
     Open your browser and go to `http://localhost:8501` to view the app.
 
 ## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-## Contact
-For any inquiries or feedback, please contact me at [your-email@example.com](mailto:your-email@example.com).
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more info.
