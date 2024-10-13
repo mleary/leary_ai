@@ -8,8 +8,8 @@ load_dotenv()
 
 
 # Constants
-MODEL_PROVIDERS = ["OpenAI"]
-OPENAI_MODELS = ["gpt-4o-mini", "gpt-4o", "o1-mini"]
+MODEL_PROVIDERS = ["Azure OpenAI"]
+AZURE_OPENAI_MODELS = ["gpt-4o-mini", "gpt-4o"]
 
 
 def initialize_session_state():
@@ -19,7 +19,7 @@ def initialize_session_state():
     if "messages" not in st.session_state:
         st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
     if "model_name" not in st.session_state:
-        st.session_state["model_name"] = OPENAI_MODELS[0]
+        st.session_state["model_name"] = AZURE_OPENAI_MODELS[0]
 
 
 def render_sidebar():
@@ -31,8 +31,8 @@ def render_sidebar():
     
     model_provider = st.sidebar.selectbox("Select Model Provider", MODEL_PROVIDERS, key="model_provider")
     
-    if model_provider == "OpenAI":
-        model_name = st.sidebar.selectbox("Model Name", OPENAI_MODELS, key="openai_model_name")
+    if model_provider == "Azure OpenAI":
+        model_name = st.sidebar.selectbox("Model Name", AZURE_OPENAI_MODELS, key="aoai_model_name")
         st.session_state.model_name = model_name
 
     st.sidebar.markdown("---")  # Add a line at the end
