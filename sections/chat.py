@@ -9,7 +9,7 @@ load_dotenv()
 
 # Constants
 MODEL_PROVIDERS = ["OpenAI"]
-OPENAI_MODELS = ["gpt-4o-mini", "gpt-4o"]
+OPENAI_MODELS = ["gpt-4o-mini", "gpt-4o", "o1-mini"]
 
 
 def initialize_session_state():
