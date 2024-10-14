@@ -1,15 +1,16 @@
 import os
 import streamlit as st
 from dotenv import load_dotenv
-from openai import AzureOpenAI
+from openai import AzureOpenAI, OpenAI
 
 # Load environment variables from .env file
 load_dotenv()
 
 
 # Constants
-MODEL_PROVIDERS = ["Azure OpenAI"]
+MODEL_PROVIDERS = ["Azure OpenAI", "OpenAI"]
 AZURE_OPENAI_MODELS = ["gpt-4o-mini", "gpt-4o"]
+OPENAI_MODELS = ["o1-mini"]
 
 
 def initialize_session_state():
@@ -35,8 +36,10 @@ def render_sidebar():
         model_name = st.sidebar.selectbox("Model Name", AZURE_OPENAI_MODELS, key="aoai_model_name")
         st.session_state.model_name = model_name
 
+    if model_provider == "OpenAI":
+        model_name = st.sidebar.selectbox("Model Name", OPENAI_MODELS, key="oai_model_name")
+        st.session_state.model_name = model_name
     st.sidebar.markdown("---")  # Add a line at the end
-
 
 
 def setup_azure_openai_client():
@@ -58,11 +61,29 @@ def setup_azure_openai_client():
         return None
 
 
+def setup_openai_client():
+    """
+    Set up the OpenAI client for chat completions.
+
+    Returns:
+        openai.Client: The OpenAI client configured for chat completions.
+    """
+    try:
+        client = OpenAI(
+            api_key= os.getenv("OPENAI_KEY")
+        )
+        return client
+    except Exception as e:
+        st.error(f"An error occurred while setting up the OpenAI client: {e}")
+        return None   
+
+
 def render():
     st.header("Chat")
     render_sidebar()
     initialize_session_state()
     client = setup_azure_openai_client()
+    client_oai = setup_openai_client()
 
     for msg in st.session_state.messages:
         st.chat_message(msg["role"]).write(msg["content"])
@@ -72,7 +93,10 @@ def render():
 
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
-        response = client.chat.completions.create(model=st.session_state.model_name, messages=st.session_state.messages)
+        if st.session_state.model_name == 'o1-mini':
+            response = client_oai.chat.completions.create(model=st.session_state.model_name, messages=st.session_state.messages)
+        else: 
+            response = client.chat.completions.create(model=st.session_state.model_name, messages=st.session_state.messages)
         msg = response.choices[0].message.content
         st.session_state.messages.append({"role": "assistant", "content": msg})
         st.chat_message("assistant").write(msg)
