@@ -1,0 +1,1 @@
+AZURE_API_VERSION = '2024-07-01-preview'
