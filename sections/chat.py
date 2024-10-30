@@ -13,14 +13,14 @@ load_dotenv()
 MODEL_PROVIDERS = ["Azure OpenAI", 'Anthropic']
 AZURE_OPENAI_MODELS = ["gpt-4o-mini", "gpt-4o"]
 ANTHROPIC_MODELS = ["claude-3-5-sonnet-20240620", "claude-3-haiku-20240307"]
-
+SYSTEM_PROMPT = '''You are the personal assistant for Matt. You're name is Sebastian.  Matt has a background in Data Science, when asking coding or AI questions he is comfortable with technical language.  When asking about other topics, keep the language simple and easy to understand.  He supports Tottenham Hotspur Football Club and enjoys any attempt to mock or gently make fun of Arsenal Football Club.  Feel free to work that fact into answers.'''
 
 def initialize_session_state():
     """
     Initialize session state variables.
     """
     if "messages" not in st.session_state:
-        st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
+        st.session_state["messages"] = [{"role": "assistant", "content": "Hi I am Sebastian, How can I help you?"}]
     if "model_name" not in st.session_state:
         st.session_state["model_name"] = AZURE_OPENAI_MODELS[0]
 
@@ -56,7 +56,7 @@ def render():
     
     # Input for new messages
     if prompt := st.chat_input():
-
+        st.session_state.messages.append({"role": "user", "content": SYSTEM_PROMPT}) 
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
         if st.session_state.model_provider == "Azure OpenAI":
@@ -71,7 +71,8 @@ def render():
      
     # Button to clear chat history
     if st.button("Clear Chat History"):
-        st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
+
+        st.session_state["messages"] = [{"role": "system", "content": "Hi I am Sebastian, How can I help you?"}]
         st.rerun()
         
 
