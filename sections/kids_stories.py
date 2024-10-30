@@ -1,7 +1,9 @@
+import os
 import streamlit as st
 from openai import AzureOpenAI
 from dotenv import load_dotenv
-import os
+
+from config import AZURE_API_VERSION
 
 # Load environment variables from .env file
 load_dotenv()
@@ -24,7 +26,7 @@ def openai_story(system_prompt, user_prompt):
     # Set up the Azure OpenAI client
     client = AzureOpenAI(
         api_key=os.getenv("AZURE_OPENAI_API_KEY"), 
-        api_version="2024-07-01-preview",
+        api_version=AZURE_API_VERSION,
         azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"))
 
     completion = client.chat.completions.create(
