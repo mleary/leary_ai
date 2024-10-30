@@ -123,7 +123,7 @@ def render():
         "id":id,
         "author": ", ".join(creator),
         "prompt": prompt,
-        'tags': ", ".join(type)
+        'type': type
         }
 
         save_image_to_azure(
