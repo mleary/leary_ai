@@ -64,7 +64,7 @@ def render():
     # Place the dropdown selection in the first column
     with col1:
         length = st.selectbox(
-            'How many paragraphs?', (3, 4, 5, 6))
+            'How many paragraphs?', (2, 3, 4, 5, 6))
 
     # Place the multiselect in the second column
     with col2:
@@ -81,7 +81,7 @@ def render():
         st.markdown('---')
 
         # Update the placeholder with a the result
-        details = f'The story should be approximately {length} paragraphs long and it is a {tone} story'
+        details = f'The story should be approximately {length} paragraphs long and it is a {tone} story.  Here are some details: {user_input}'
         prompt = st.session_state.system_prompt + details
         result = openai_story(st.session_state.system_prompt, prompt)
         placeholder.text('Creating an audio output of your story.')

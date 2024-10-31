@@ -29,7 +29,7 @@ def number_guessing_game():
     client = setup_azure_openai_client()
     
     # User inputs and buttons
-    if st.button("Play Again"):
+    if st.button("Play Again", key="play_again"):
         reset_game()
     tone = st.text_input("What tone should I respond in?:")
     guess = st.number_input("Guess a number between 1 and 10:", min_value=1, max_value=100)
