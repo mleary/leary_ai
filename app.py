@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit_authenticator as stauth
 from openai import OpenAI
 from utils.auth import config
-from sections import home, chat, calendar, kids_stories, kids_images, outsmart_ai
+from sections import home, chat, calendar, kids_stories, kids_images, play_ai, favorites
 
 ####################################
 # Constants & setup
@@ -18,7 +18,8 @@ PAGES = {
     "Calendar": calendar,
     "Create a story!": kids_stories,
     "Create an image!": kids_images,
-    "AI Number Guessing Game": outsmart_ai
+    "Play a game with AI": play_ai,
+    "Favorite Things @ Pinchbeck": favorites
 }
 
 ###################################
