@@ -13,7 +13,7 @@ SYSTEM_PROMPT = "You are playing this game with young children.  Only respond wi
 
 def number_guessing_game():
     if 'target_number' not in st.session_state:
-        st.session_state.target_number = random.randint(1, 100)
+        st.session_state.target_number = random.randint(1, 10)
     if "attempts" not in st.session_state:
         st.session_state.attempts = 0
     
@@ -21,7 +21,7 @@ def number_guessing_game():
     def reset_game():
         del st.session_state.target_number
         del st.session_state.attempts
-        st.session_state.target_number = random.randint(1, 100)
+        st.session_state.target_number = random.randint(1, 10)
         st.session_state.attempts = 0
 
 
@@ -29,10 +29,10 @@ def number_guessing_game():
     client = setup_azure_openai_client()
     
     # User inputs and buttons
-    if st.button("Play Again"):
+    if st.button("Play Again", key="play_again"):
         reset_game()
     tone = st.text_input("What tone should I respond in?:")
-    guess = st.number_input("Guess a number between 1 and 100:", min_value=1, max_value=100)
+    guess = st.number_input("Guess a number between 1 and 10:", min_value=1, max_value=100)
     
     if st.button("Make Guess"):
         st.session_state.attempts += 1
@@ -59,7 +59,7 @@ def number_guessing_game():
 
 
 def render():
-    st.header("🎲 Can You Outsmart the AI? 🤔")
-    st.write("I'm thinking of a number between 1 and 100...")
+    st.header("🎲 Want to play a guessing game with AI? 🤔")
+    st.write("I'm thinking of a number between 1 and 10, can you guess it...")
 
     number_guessing_game()
