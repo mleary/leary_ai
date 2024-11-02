@@ -25,8 +25,9 @@ def setup_azure_openai_client():
 
 def setup_anthropic_client():
     try:
-        client = anthropic.Anthropic(
+        client = Anthropic(
             api_key=os.environ.get("ANTHROPIC_API_KEY"),
         )
+        return client
     except Exception as e:
         raise RuntimeError(f"An error occurred while setting up the Anthropic client: {e}")
