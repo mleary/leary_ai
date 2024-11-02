@@ -75,19 +75,21 @@ def render():
     
     # Input for new messages
     if prompt := st.chat_input():
-        #st.session_state.messages.append({"role": "user", "content": system_prompt}) 
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
         if st.session_state.model_provider == "Azure OpenAI":
-            response = client.chat.completions.create(model=st.session_state.model_name, messages=st.session_state.messages)
+            messages_with_system_prompt = [{"role": "system", "content": system_prompt}] + st.session_state.messages
+            response = client.chat.completions.create(
+                model=st.session_state.model_name, 
+                messages=messages_with_system_prompt)
             msg = response.choices[0].message.content
         elif st.session_state.model_provider == "Anthropic":
             print("Messages being sent:", st.session_state.messages)  # Debug print
             response = client_claude.messages.create(
                 model=st.session_state.model_name,
-                #messages=[{"role": m["role"], "content": m["content"]}for m in st.session_state.messages],
+                system=system_prompt,
                 messages=st.session_state.messages,
-                max_tokens=1000)
+                max_tokens=2000)
             msg = response.content[0].text
         
         st.session_state.messages.append({"role": "assistant", "content": msg})
