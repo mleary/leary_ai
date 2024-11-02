@@ -5,7 +5,7 @@ from openai import AzureOpenAI
 from anthropic import Anthropic
 
 from utils.llm_helpers import setup_azure_openai_client, setup_anthropic_client
-from config import CHAT_MATT_PROMPT, CHAT_USER_PROMPT
+from config import CHAT_MATT_PROMPT, CHAT_AM_PROMPT, CHAT_USER_PROMPT
 
 # Load environment variables from .env file
 load_dotenv()
@@ -32,6 +32,8 @@ def set_system_prompt():
     """
     if st.session_state["username"] == "matt":
         return CHAT_MATT_PROMPT
+    if st.session_state["username"] == "am":
+        return CHAT_AM_PROMPT
     else:
         return CHAT_USER_PROMPT
 
