@@ -65,11 +65,14 @@ def main():
         config['preauthorized']
     )
 
-    authenticator.login(location='main')
+    name, authentication_status, username = authenticator.login(location='main')
 
     # App - If successful login, proceed to page selection
     if st.session_state['authentication_status']:
         authenticator.logout()
+
+        # Store the username in session state
+        st.session_state['username'] = username
 
         # Sidebar for navigation
         st.sidebar.title(NAVIGATION_TITLE)
@@ -81,6 +84,7 @@ def main():
         # Common sidebar content
         with st.sidebar:
             st.write("Powered by Python, LLMs, and ☕")
+            st.write(f"Welcome, {st.session_state['username'].capitalize()}!")
 
     elif st.session_state['authentication_status'] is False:
         st.error('Username/password is incorrect')
