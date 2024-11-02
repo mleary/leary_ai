@@ -73,7 +73,7 @@ def main():
 
         # Store the username in session state
         st.session_state['username'] = username
-        
+
         # Sidebar for navigation
         st.sidebar.title(NAVIGATION_TITLE)
         page = st.sidebar.selectbox("Select a page", list(PAGES.keys()), index=0)
@@ -84,6 +84,7 @@ def main():
         # Common sidebar content
         with st.sidebar:
             st.write("Powered by Python, LLMs, and ☕")
+            st.write(f"Welcome, {st.session_state['username'].capitalize()}!")
 
     elif st.session_state['authentication_status'] is False:
         st.error('Username/password is incorrect')
