@@ -65,12 +65,15 @@ def main():
         config['preauthorized']
     )
 
-    authenticator.login(location='main')
+    name, authentication_status, username = authenticator.login(location='main')
 
     # App - If successful login, proceed to page selection
     if st.session_state['authentication_status']:
         authenticator.logout()
 
+        # Store the username in session state
+        st.session_state['username'] = username
+        
         # Sidebar for navigation
         st.sidebar.title(NAVIGATION_TITLE)
         page = st.sidebar.selectbox("Select a page", list(PAGES.keys()), index=0)
