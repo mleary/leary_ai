@@ -14,9 +14,8 @@ load_dotenv()
 MODEL_PROVIDERS = ["Azure OpenAI", 'Anthropic']
 AZURE_OPENAI_MODELS = ["gpt-4o-mini", "gpt-4o"]
 ANTHROPIC_MODELS = ["claude-3-5-sonnet-20240620", "claude-3-haiku-20240307"]
-GREETING = f"Hi {st.session_state['username'].capitalize()}, how can I help you today?"
 
-def initialize_session_state():
+def initialize_session_state(GREETING):
     """
     Initialize session state variables.
     """
@@ -24,6 +23,7 @@ def initialize_session_state():
         st.session_state["messages"] = [{"role": "assistant", "content": GREETING}]
     if "model_name" not in st.session_state:
         st.session_state["model_name"] = AZURE_OPENAI_MODELS[0]
+
 
 def set_system_prompt():
     """
@@ -33,6 +33,9 @@ def set_system_prompt():
         return CHAT_MATT_PROMPT
     else:
         return CHAT_USER_PROMPT
+
+def set_greeting():
+    return f"Hi {st.session_state['username'].capitalize()}, how can I help you today?"
 
 def render_sidebar():
     """
@@ -56,7 +59,8 @@ def render_sidebar():
 def render():
     st.header("Chat")
     render_sidebar()
-    initialize_session_state()
+    GREETING = set_greeting()
+    initialize_session_state(GREETING)
     system_prompt = set_system_prompt()
     client = setup_azure_openai_client()
     client_claude = setup_anthropic_client
