@@ -145,7 +145,18 @@ def render():
             )
             st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-    # Button to clear chat history
-    if st.button("Clear Chat History"):
-        st.session_state["messages"] = [{"role": "assistant", "content": GREETING}]
-        st.rerun()
+    # Button and feedback in the same row
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        if st.button("Clear Chat History"):
+            st.session_state["messages"] = [{"role": "assistant", "content": GREETING}]
+            st.session_state["feedback"] = {}
+            st.rerun()
+    with col2:
+        col2_a, col2_b = st.columns(2)
+        with col2_a:
+            if st.button("👍", key="thumbs_up"):
+                st.session_state.setdefault("feedback", {})["clear"] = "up"
+        with col2_b:
+            if st.button("👎", key="thumbs_down"):
+                st.session_state.setdefault("feedback", {})["clear"] = "down"
